@@ -1,0 +1,89 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+#
+
+menu "MQTT simple sample"
+config MQTT_PUB_TOPIC
+	string "MQTT publish topic"
+	default "my/publish/topic"
+
+config MQTT_SUB_TOPIC
+	string "MQTT subscribe topic"
+	default "my/subscribe/topic"
+
+config MQTT_CLIENT_ID
+	string "MQTT Client ID"
+	default "my-client-id"
+
+config MQTT_BROKER_HOSTNAME
+	string "MQTT broker hostname"
+	default "mqtt.eclipse.org"
+
+config MQTT_CLIENT_USERNAME
+	string "MQTT client username"
+	default "NULL"
+
+config MQTT_CLIENT_PASSWORD
+	string "MQTT client password"
+	default "NULL"
+
+config MQTT_BROKER_PORT
+	int "MQTT broker port"
+	default 1883
+
+config MQTT_MESSAGE_BUFFER_SIZE
+	int "MQTT message buffer size"
+	default 128
+
+config MQTT_PAYLOAD_BUFFER_SIZE
+	int "MQTT payload buffer size"
+	default 128
+
+endmenu
+
+menu "LTE BLE gateway sample"
+
+choice
+	prompt "GPS device"
+	default GPS_USE_SIM
+	help
+		Select from which device GPS data will be fetched.
+
+config GPS_USE_SIM
+	bool "Use GPS simulator"
+	select GPS_SIM
+	select GPS_SIM_TRIGGER
+	help
+		Use simulated GPS data.
+
+config GPS_USE_NRF9160
+	bool "User provided GPS device"
+	help
+		Provide a GPS device that location data will be fetched from and
+		sent to nRF Cloud
+
+endchoice
+
+config GPS_DEV_NAME
+	string
+	default GPS_SIM_DEV_NAME if GPS_USE_SIM
+	default "NRF9160_GPS" if GPS_USE_NRF9160
+
+config GPS_SEARCH_INTERVAL
+	int "Interval for starting GPS search"
+	default 240
+
+config GPS_SEARCH_TIMEOUT
+	int "Timeout for GPS search"
+	default 120
+	help
+	  The GPS will stop acquiring GPS fix when it times out.
+	  It will restart the search at the start of the next search interval.
+
+endmenu
+
+menu "Zephyr Kernel"
+source "$ZEPHYR_BASE/Kconfig.zephyr"
+endmenu
